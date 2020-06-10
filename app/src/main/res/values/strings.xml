@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">OmniStoreInstaller</string>
+    <string name="store_installed">OmniStore already installed</string>
+    <string name="install_store_button">Install OmniStore</string>
+</resources>

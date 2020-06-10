@@ -1,0 +1,24 @@
+android_app {
+  name: "OmniStoreInstaller",
+  manifest: "app/src/main/AndroidManifest.xml",
+
+  srcs: [
+    "app/src/main/**/*.kt",
+    "app/src/main/**/*.java",
+  ],
+
+  resource_dirs: [
+    "app/src/main/res/",
+  ],
+
+  static_libs: [
+    "androidx.core_core",
+    "androidx.appcompat_appcompat",
+  ],
+
+  kotlincflags: ["-Xjvm-default=enable"],
+  
+  optimize: {
+    enabled: false,
+  },
+}
