@@ -20,10 +20,24 @@ class MainActivity : AppCompatActivity() {
     private val TAG = "OmniStoreInstaller:MainActivity"
     private lateinit var mDownloadManager: DownloadManager
     private val mDownloadReceiver: DownloadReceiver = DownloadReceiver()
-    private val STORE_URI = "https://dl.omnirom.org/store/OmniStore.apk"
-    private val REQUEST_ERMISSION = 0
-    var mInstallEnabled = false
-    var isNetworkConnected = false;
+    private val mPackageReceiver: PackageReceiver = PackageReceiver()
+    private val APPS_BASE_URI = "https://dl.omnirom.org/store/"
+    private val STORE_URI = APPS_BASE_URI + "OmniStore.apk"
+    private val OMNI_STORE_APP_PKG = "org.omnirom.omnistore"
+    private var mNetworkConnected = false;
+    private val mNetworkCallback = NetworkCallback()
+
+    inner class NetworkCallback : ConnectivityManager.NetworkCallback() {
+        override fun onAvailable(network: Network) {
+            Log.d(TAG, "NetworkCallback onAvailable")
+            mNetworkConnected = true
+        }
+
+        override fun onLost(network: Network) {
+            Log.d(TAG, "NetworkCallback onLost")
+            mNetworkConnected = false
+        }
+    }
 
     inner class DownloadReceiver : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -39,6 +53,19 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    inner class PackageReceiver : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            Log.d(TAG, "onReceive " + intent?.action)
+            if (intent?.action == Intent.ACTION_PACKAGE_ADDED) {
+                val pkg = intent.dataString
+                if (pkg == "package:" + OMNI_STORE_APP_PKG) {
+                    disableMe()
+                    finish()
+                }
+            }
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -47,50 +74,33 @@ class MainActivity : AppCompatActivity() {
         val downloadFilter = IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE)
         registerReceiver(mDownloadReceiver, downloadFilter)
 
+        val packageFilter = IntentFilter(Intent.ACTION_PACKAGE_ADDED)
+        packageFilter.addDataScheme("package")
+        registerReceiver(mPackageReceiver, packageFilter)
+
         findViewById<Button>(R.id.install_store).setOnClickListener {
-            if (!mInstallEnabled) {
-                requestPermissions(
-                    arrayOf(
-                        Manifest.permission.READ_EXTERNAL_STORAGE
-                    ), REQUEST_ERMISSION
-                )
+            if (mNetworkConnected) {
+                findViewById<TextView>(R.id.status).visibility = View.INVISIBLE
+                downloadStore()
             } else {
-                if(isNetworkConnected) {
-                    findViewById<TextView>(R.id.status).visibility = View.INVISIBLE
-                    downloadStore()
-                } else {
-                    findViewById<TextView>(R.id.status).visibility = View.VISIBLE
-                }
+                findViewById<TextView>(R.id.status).visibility = View.VISIBLE
             }
         }
         findViewById<TextView>(R.id.install_text).setOnClickListener {
-            val name = ComponentName("org.omnirom.omnistore", "org.omnirom.omnistore.MainActivity")
+            val name = ComponentName(OMNI_STORE_APP_PKG, OMNI_STORE_APP_PKG + ".MainActivity")
             val intent = Intent()
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
             intent.component = name
             startActivity(intent)
-            finish()
         }
-
-        val connectivityManager =
-            getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        connectivityManager.registerDefaultNetworkCallback(
-            object : ConnectivityManager.NetworkCallback() {
-                override fun onAvailable(network: Network) {
-                    Log.d(TAG, "NetworkCallback onAvailable")
-                    isNetworkConnected = true
-                }
-
-                override fun onLost(network: Network) {
-                    Log.d(TAG, "NetworkCallback onLost")
-                    isNetworkConnected = false
-                }
-            })
     }
 
     override fun onResume() {
         super.onResume()
-        stopProgress()
+
+        val connectivityManager =
+            getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        connectivityManager.registerDefaultNetworkCallback(mNetworkCallback)
 
         findViewById<TextView>(R.id.status).visibility = View.INVISIBLE
 
@@ -100,40 +110,26 @@ class MainActivity : AppCompatActivity() {
         } else {
             findViewById<Button>(R.id.install_store).visibility = View.VISIBLE;
             findViewById<TextView>(R.id.install_text).text = getString(R.string.store_welcome)
-
-            if (!isNetworkConnected) {
-                findViewById<TextView>(R.id.status).visibility = View.VISIBLE
-            }
         }
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int, permissions: Array<String?>,
-        grantResults: IntArray
-    ) {
-        if (requestCode == REQUEST_ERMISSION && grantResults.contains(PackageManager.PERMISSION_GRANTED)) {
-            mInstallEnabled = true;
-
-            if(isNetworkConnected) {
-                findViewById<TextView>(R.id.status).visibility = View.INVISIBLE
-                downloadStore()
-            } else {
-                findViewById<TextView>(R.id.status).visibility = View.VISIBLE
-            }
-        }
+    override fun onPause() {
+        super.onPause()
+        val connectivityManager =
+            getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        connectivityManager.unregisterNetworkCallback(mNetworkCallback)
     }
 
     override fun onDestroy() {
         super.onDestroy()
         unregisterReceiver(mDownloadReceiver)
+        unregisterReceiver(mPackageReceiver)
     }
 
     private fun disableMe() {
-        val receiver = ComponentName(this, MainActivity::class.java)
-
-        packageManager.setComponentEnabledSetting(
-            receiver,
-            PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+        packageManager.setApplicationEnabledSetting(
+            packageName,
+            PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
             PackageManager.DONT_KILL_APP
         )
     }
@@ -159,17 +155,13 @@ class MainActivity : AppCompatActivity() {
         intent.setDataAndType(
             uri, "application/vnd.android.package-archive"
         )
-        intent.flags = (Intent.FLAG_ACTIVITY_NEW_TASK
-                or Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
         startActivity(intent)
-
-        disableMe()
-        finish()
     }
 
     private fun isInstalled(): Boolean {
         try {
-            packageManager.getApplicationInfo("org.omnirom.omnistore", PackageManager.GET_META_DATA)
+            packageManager.getApplicationInfo(OMNI_STORE_APP_PKG, PackageManager.GET_META_DATA)
             return true
         } catch (e: PackageManager.NameNotFoundException) {
             return false

@@ -70,7 +70,7 @@
         android:layout_height="match_parent"
         android:layout_marginBottom="200dp"
         android:background="@android:color/transparent"
-        android:visibility="visible">
+        android:visibility="gone">
 
         <ProgressBar
             style="?android:attr/progressBarStyle"

@@ -14,9 +14,8 @@ class BootReceiver : BroadcastReceiver() {
             if (context != null) {
                 if (!isInstalled(context)) {
                     Log.d(TAG, "onReceive " + intent?.action)
-                    val intent = Intent(context, MainActivity::class.java)
-                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                    context.startActivity(intent)
+                    //val intent = Intent(context, MainActivity::class.java)
+                    //context.startActivity(intent)
                 }
             }
         }
