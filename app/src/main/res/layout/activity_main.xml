@@ -16,23 +16,42 @@
             android:layout_height="0dp"
             android:layout_weight="1" />
 
+        <ImageView
+            android:layout_width="128dp"
+            android:layout_height="128dp"
+            android:scaleType="centerCrop"
+            android:layout_marginBottom="30dp"
+            android:layout_gravity="center_horizontal"
+            android:src="@drawable/omnirom_logo" />
+
         <TextView
             android:id="@+id/install_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:gravity="center"
+            android:layout_gravity="center_horizontal"
             android:layout_marginBottom="30dp"
+            android:gravity="center"
+            android:text="@string/store_welcome"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
+        <TextView
+            android:id="@+id/status"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="30dp"
+            android:gravity="center"
+            android:visibility="invisible"
+            android:text="@string/status_no_network"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small" />
 
         <Button
             android:id="@+id/install_store"
             style="@style/Widget.AppCompat.Button.Colored"
             android:layout_width="wrap_content"
             android:layout_height="60dp"
-            android:layout_gravity="center"
+            android:layout_gravity="center_horizontal"
             android:backgroundTint="@color/colorPrimary"
-            android:gravity="center"
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
             android:text="@string/install_store_button"
@@ -49,9 +68,9 @@
         android:id="@+id/progress"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="visible"
         android:layout_marginBottom="200dp"
-        android:background="@android:color/transparent">
+        android:background="@android:color/transparent"
+        android:visibility="visible">
 
         <ProgressBar
             style="?android:attr/progressBarStyle"

@@ -48,8 +48,19 @@ class MainActivity : AppCompatActivity() {
         registerReceiver(mDownloadReceiver, downloadFilter)
 
         findViewById<Button>(R.id.install_store).setOnClickListener {
-            if (mInstallEnabled and isNetworkConnected) {
-                downloadStore()
+            if (!mInstallEnabled) {
+                requestPermissions(
+                    arrayOf(
+                        Manifest.permission.READ_EXTERNAL_STORAGE
+                    ), REQUEST_ERMISSION
+                )
+            } else {
+                if(isNetworkConnected) {
+                    findViewById<TextView>(R.id.status).visibility = View.INVISIBLE
+                    downloadStore()
+                } else {
+                    findViewById<TextView>(R.id.status).visibility = View.VISIBLE
+                }
             }
         }
         findViewById<TextView>(R.id.install_text).setOnClickListener {
@@ -58,6 +69,7 @@ class MainActivity : AppCompatActivity() {
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
             intent.component = name
             startActivity(intent)
+            finish()
         }
 
         val connectivityManager =
@@ -74,26 +86,24 @@ class MainActivity : AppCompatActivity() {
                     isNetworkConnected = false
                 }
             })
-
-        if (!mInstallEnabled) {
-            requestPermissions(
-                arrayOf(
-                    Manifest.permission.READ_EXTERNAL_STORAGE
-                ), REQUEST_ERMISSION
-            )
-        }
     }
 
     override fun onResume() {
         super.onResume()
         stopProgress()
+
+        findViewById<TextView>(R.id.status).visibility = View.INVISIBLE
+
         if (isInstalled()) {
             findViewById<Button>(R.id.install_store).visibility = View.GONE;
-            findViewById<TextView>(R.id.install_text).visibility = View.VISIBLE;
             findViewById<TextView>(R.id.install_text).text = getString(R.string.store_installed)
         } else {
-            findViewById<TextView>(R.id.install_text).visibility = View.GONE
             findViewById<Button>(R.id.install_store).visibility = View.VISIBLE;
+            findViewById<TextView>(R.id.install_text).text = getString(R.string.store_welcome)
+
+            if (!isNetworkConnected) {
+                findViewById<TextView>(R.id.status).visibility = View.VISIBLE
+            }
         }
     }
 
@@ -103,6 +113,13 @@ class MainActivity : AppCompatActivity() {
     ) {
         if (requestCode == REQUEST_ERMISSION && grantResults.contains(PackageManager.PERMISSION_GRANTED)) {
             mInstallEnabled = true;
+
+            if(isNetworkConnected) {
+                findViewById<TextView>(R.id.status).visibility = View.INVISIBLE
+                downloadStore()
+            } else {
+                findViewById<TextView>(R.id.status).visibility = View.VISIBLE
+            }
         }
     }
 
@@ -168,5 +185,4 @@ class MainActivity : AppCompatActivity() {
         findViewById<Button>(R.id.install_store).isEnabled = true
         findViewById<FrameLayout>(R.id.progress).visibility = View.GONE
     }
-
 }

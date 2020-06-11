@@ -2,4 +2,6 @@
     <string name="app_name">OmniStoreInstaller</string>
     <string name="store_installed">OmniStore already installed</string>
     <string name="install_store_button">Install OmniStore</string>
+    <string name="store_welcome">Welcome to the new OmniStore!\nYou are just one step away.\nPlease press the button below\nto install the real application.</string>
+    <string name="status_no_network">No network connection</string>
 </resources>
