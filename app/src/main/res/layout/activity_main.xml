@@ -34,17 +34,6 @@
             android:text="@string/store_welcome"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
-        <TextView
-            android:id="@+id/status"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="30dp"
-            android:gravity="center"
-            android:visibility="invisible"
-            android:text="@string/status_no_network"
-            android:textAppearance="@style/TextAppearance.AppCompat.Small" />
-
         <Button
             android:id="@+id/install_store"
             style="@style/Widget.AppCompat.Button.Colored"

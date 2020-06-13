@@ -1,6 +1,7 @@
 package org.omnirom.omnistoreinstaller
 
 import android.Manifest
+import android.app.AlertDialog
 import android.app.DownloadManager
 import android.content.*
 import android.content.pm.PackageManager
@@ -22,22 +23,9 @@ class MainActivity : AppCompatActivity() {
     private val mDownloadReceiver: DownloadReceiver = DownloadReceiver()
     private val mPackageReceiver: PackageReceiver = PackageReceiver()
     private val APPS_BASE_URI = "https://dl.omnirom.org/store/"
-    private val STORE_URI = APPS_BASE_URI + "OmniStore.apk"
+    private val STORE_APP_APK = "OmniStore.apk"
+    private val STORE_URI = APPS_BASE_URI + STORE_APP_APK
     private val OMNI_STORE_APP_PKG = "org.omnirom.omnistore"
-    private var mNetworkConnected = false;
-    private val mNetworkCallback = NetworkCallback()
-
-    inner class NetworkCallback : ConnectivityManager.NetworkCallback() {
-        override fun onAvailable(network: Network) {
-            Log.d(TAG, "NetworkCallback onAvailable")
-            mNetworkConnected = true
-        }
-
-        override fun onLost(network: Network) {
-            Log.d(TAG, "NetworkCallback onLost")
-            mNetworkConnected = false
-        }
-    }
 
     inner class DownloadReceiver : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -79,12 +67,8 @@ class MainActivity : AppCompatActivity() {
         registerReceiver(mPackageReceiver, packageFilter)
 
         findViewById<Button>(R.id.install_store).setOnClickListener {
-            if (mNetworkConnected) {
-                findViewById<TextView>(R.id.status).visibility = View.INVISIBLE
-                downloadStore()
-            } else {
-                findViewById<TextView>(R.id.status).visibility = View.VISIBLE
-            }
+            downloadStore()
+
         }
         findViewById<TextView>(R.id.install_text).setOnClickListener {
             val name = ComponentName(OMNI_STORE_APP_PKG, OMNI_STORE_APP_PKG + ".MainActivity")
@@ -98,12 +82,6 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
 
-        val connectivityManager =
-            getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        connectivityManager.registerDefaultNetworkCallback(mNetworkCallback)
-
-        findViewById<TextView>(R.id.status).visibility = View.INVISIBLE
-
         if (isInstalled()) {
             findViewById<Button>(R.id.install_store).visibility = View.GONE;
             findViewById<TextView>(R.id.install_text).text = getString(R.string.store_installed)
@@ -111,13 +89,6 @@ class MainActivity : AppCompatActivity() {
             findViewById<Button>(R.id.install_store).visibility = View.VISIBLE;
             findViewById<TextView>(R.id.install_text).text = getString(R.string.store_welcome)
         }
-    }
-
-    override fun onPause() {
-        super.onPause()
-        val connectivityManager =
-            getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        connectivityManager.unregisterNetworkCallback(mNetworkCallback)
     }
 
     override fun onDestroy() {
@@ -136,12 +107,28 @@ class MainActivity : AppCompatActivity() {
 
     private fun downloadStore() {
         val url: String = STORE_URI
-        val request: DownloadManager.Request = DownloadManager.Request(Uri.parse(url))
-        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "OmniStore.apk")
-        //request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE)
-        //request.setNotificationVisibility()
-        mDownloadManager.enqueue(request)
-        startProgress()
+        val checkApp =
+            NetworkUtils().CheckAppTask(
+                url,
+                object : NetworkUtils.NetworkTaskCallback {
+                    override fun postAction(networkError: Boolean) {
+                        if (networkError) {
+                            showNetworkError(url)
+                        } else {
+                            val request: DownloadManager.Request =
+                                DownloadManager.Request(Uri.parse(url))
+                            request.setDestinationInExternalPublicDir(
+                                Environment.DIRECTORY_DOWNLOADS,
+                                STORE_APP_APK
+                            )
+                            //request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE)
+                            //request.setNotificationVisibility()
+                            mDownloadManager.enqueue(request)
+                            startProgress()
+                        }
+                    }
+                });
+        checkApp.execute()
     }
 
     private fun installApp(downloadId: Long) {
@@ -176,5 +163,13 @@ class MainActivity : AppCompatActivity() {
     fun stopProgress() {
         findViewById<Button>(R.id.install_store).isEnabled = true
         findViewById<FrameLayout>(R.id.progress).visibility = View.GONE
+    }
+
+    private fun showNetworkError(url: String) {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle(getString(R.string.dialog_title_network_error))
+        builder.setMessage(getString(R.string.dialog_message_network_error));
+        builder.setPositiveButton(android.R.string.ok, null)
+        builder.create().show()
     }
 }
