@@ -26,17 +26,18 @@ class MainActivity : AppCompatActivity() {
     private val STORE_APP_APK = "OmniStore.apk"
     private val STORE_URI = APPS_BASE_URI + STORE_APP_APK
     private val OMNI_STORE_APP_PKG = "org.omnirom.omnistore"
+    private var mDownloadId:Long = -1
 
     inner class DownloadReceiver : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             Log.d(TAG, "onReceive " + intent?.action)
             if (intent?.action.equals(DownloadManager.ACTION_DOWNLOAD_COMPLETE)) {
                 stopProgress()
-                val downloadId = intent?.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
-                if (downloadId == -1L) {
+                mDownloadId = intent?.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)!!
+                if (mDownloadId == -1L) {
                     return
                 }
-                installApp(downloadId!!)
+                installApp(mDownloadId)
             }
         }
     }
@@ -47,6 +48,7 @@ class MainActivity : AppCompatActivity() {
             if (intent?.action == Intent.ACTION_PACKAGE_ADDED) {
                 val pkg = intent.dataString
                 if (pkg == "package:" + OMNI_STORE_APP_PKG) {
+                    mDownloadManager.remove(mDownloadId)
                     disableMe()
                     finish()
                 }
@@ -106,6 +108,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun downloadStore() {
+        startProgress()
         val url: String = STORE_URI
         val checkApp =
             NetworkUtils().CheckAppTask(
@@ -113,6 +116,7 @@ class MainActivity : AppCompatActivity() {
                 object : NetworkUtils.NetworkTaskCallback {
                     override fun postAction(networkError: Boolean) {
                         if (networkError) {
+                            stopProgress()
                             showNetworkError(url)
                         } else {
                             val request: DownloadManager.Request =
@@ -124,7 +128,6 @@ class MainActivity : AppCompatActivity() {
                             //request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE)
                             //request.setNotificationVisibility()
                             mDownloadManager.enqueue(request)
-                            startProgress()
                         }
                     }
                 });
