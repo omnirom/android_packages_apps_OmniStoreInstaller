@@ -136,10 +136,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun installApp(downloadId: Long) {
         var uri: Uri? = mDownloadManager.getUriForDownloadedFile(downloadId)
-        if (uri == null) {
-            // includes also cancel
+            ?: // includes also cancel
             return
-        }
 
         val intent = Intent(Intent.ACTION_VIEW)
         intent.setDataAndType(
