@@ -22,7 +22,7 @@
             android:scaleType="centerCrop"
             android:layout_marginBottom="30dp"
             android:layout_gravity="center_horizontal"
-            android:src="@drawable/omnirom_logo" />
+            android:src="@drawable/omnistore_logo" />
 
         <TextView
             android:id="@+id/install_text"
