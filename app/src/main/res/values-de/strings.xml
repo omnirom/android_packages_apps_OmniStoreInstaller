@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">OmniStoreInstaller</string>
+    <string name="store_installed">OmniStore bereits installiert</string>
+    <string name="install_store_button">Install OmniStore</string>
+    <string name="store_welcome">Wilkommen zum neuen OmniStore!\nSie sind jetzt nur noch ein Schritt entfernt.\nDrücken Sie auf den Knop unten\num die App zu installieren.</string>
+    <string name="dialog_title_network_error">Netzwerkfehler</string>
+    <string name="dialog_message_network_error">Netzwerkverbindung nicht verfügbar.\nBitte stellen Sie sicher, dass Sie mit einem Netzwerk verbunden sind.</string>
+</resources>

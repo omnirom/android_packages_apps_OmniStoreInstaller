@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">OmniStoreInstaller</string>
+    <string name="store_installed">OmniStore je již nainstalováno</string>
+    <string name="install_store_button">Nainstalovat OmniStore</string>
+    <string name="store_welcome">Vítejte v novém OmniStore!\nZbývá vám jen jeden krok.\nNíže stiskněte tlačítko\npro instalaci aplikace.</string>
+    <string name="dialog_title_network_error">Chyba sítě</string>
+    <string name="dialog_message_network_error">Připojení k síti není k dispozici.\nUjistěte se, že jste připojeni k síti.</string>
+</resources>
