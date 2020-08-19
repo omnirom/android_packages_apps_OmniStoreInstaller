@@ -10,8 +10,10 @@ import android.net.Network
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
+import android.provider.Settings
 import android.util.Log
 import android.view.View
+import android.webkit.URLUtil
 import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.TextView
@@ -22,9 +24,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mDownloadManager: DownloadManager
     private val mDownloadReceiver: DownloadReceiver = DownloadReceiver()
     private val mPackageReceiver: PackageReceiver = PackageReceiver()
-    private val APPS_BASE_URI = "https://dl.omnirom.org/store/"
     private val STORE_APP_APK = "OmniStore.apk"
-    private val STORE_URI = APPS_BASE_URI + STORE_APP_APK
     private val OMNI_STORE_APP_PKG = "org.omnirom.omnistore"
     private var mDownloadId:Long = -1
 
@@ -109,7 +109,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun downloadStore() {
         startProgress()
-        val url: String = STORE_URI
+        val url: String = getAppsRootUri(this) + STORE_APP_APK
         val checkApp =
             NetworkUtils().CheckAppTask(
                 url,
@@ -172,5 +172,22 @@ class MainActivity : AppCompatActivity() {
         builder.setMessage(getString(R.string.dialog_message_network_error));
         builder.setPositiveButton(android.R.string.ok, null)
         builder.create().show()
+    }
+
+    private fun getAppsBaseUrl(context: Context): String {
+        var s: String? = Settings.System.getString(context.contentResolver, "store_base_url")
+            ?: return "https://dl.omnirom.org/"
+        return s!!
+    }
+
+    private fun getAppsRootUri(context: Context): String {
+        var rootUri: String? = Settings.System.getString(context.contentResolver, "store_root_uri")
+            ?: "store/"
+        if (URLUtil.isNetworkUrl(rootUri)) {
+            return rootUri!!;
+        }
+        val base: Uri = Uri.parse(getAppsBaseUrl(context))
+        val u: Uri = Uri.withAppendedPath(base, rootUri)
+        return u.toString()
     }
 }
