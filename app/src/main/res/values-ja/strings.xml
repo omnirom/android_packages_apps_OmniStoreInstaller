@@ -1,2 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="app_name">OmniStoreInstaller</string>
+    <string name="store_installed">OmniStore は既にインストールされています</string>
+    <string name="install_store_button">OmniStore をインストール</string>
+    <string name="store_welcome">新しい OmniStore へようこそ!\nあとワンステップです。\n下のボタンを押して\n実際のアプリをインストールして下さい。</string>
+    <string name="dialog_title_network_error">ネットワークエラー</string>
+    <string name="dialog_message_network_error">ネットワークに接続できません。\nネットワークに接続していることを確認して下さい。</string>
+</resources>
