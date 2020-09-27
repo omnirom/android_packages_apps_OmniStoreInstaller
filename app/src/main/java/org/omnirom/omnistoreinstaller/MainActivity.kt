@@ -23,7 +23,6 @@ class MainActivity : AppCompatActivity() {
     private val TAG = "OmniStoreInstaller:MainActivity"
     private lateinit var mDownloadManager: DownloadManager
     private val mDownloadReceiver: DownloadReceiver = DownloadReceiver()
-    private val mPackageReceiver: PackageReceiver = PackageReceiver()
     private val STORE_APP_APK = "OmniStore.apk"
     private val OMNI_STORE_APP_PKG = "org.omnirom.omnistore"
     private var mDownloadId:Long = -1
@@ -42,20 +41,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    inner class PackageReceiver : BroadcastReceiver() {
-        override fun onReceive(context: Context?, intent: Intent?) {
-            Log.d(TAG, "onReceive " + intent?.action)
-            if (intent?.action == Intent.ACTION_PACKAGE_ADDED) {
-                val pkg = intent.dataString
-                if (pkg == "package:" + OMNI_STORE_APP_PKG) {
-                    mDownloadManager.remove(mDownloadId)
-                    disableMe()
-                    finish()
-                }
-            }
-        }
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -64,20 +49,12 @@ class MainActivity : AppCompatActivity() {
         val downloadFilter = IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE)
         registerReceiver(mDownloadReceiver, downloadFilter)
 
-        val packageFilter = IntentFilter(Intent.ACTION_PACKAGE_ADDED)
-        packageFilter.addDataScheme("package")
-        registerReceiver(mPackageReceiver, packageFilter)
-
         findViewById<Button>(R.id.install_store).setOnClickListener {
-            downloadStore()
-
-        }
-        findViewById<TextView>(R.id.install_text).setOnClickListener {
-            val name = ComponentName(OMNI_STORE_APP_PKG, OMNI_STORE_APP_PKG + ".MainActivity")
-            val intent = Intent()
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-            intent.component = name
-            startActivity(intent)
+            if (!isInstalled()) {
+                downloadStore()
+            } else {
+                disableMe()
+            }
         }
     }
 
@@ -85,18 +62,17 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
 
         if (isInstalled()) {
-            findViewById<Button>(R.id.install_store).visibility = View.GONE;
             findViewById<TextView>(R.id.install_text).text = getString(R.string.store_installed)
+            findViewById<Button>(R.id.install_store).text = getString(R.string.disable_app_button)
         } else {
-            findViewById<Button>(R.id.install_store).visibility = View.VISIBLE;
             findViewById<TextView>(R.id.install_text).text = getString(R.string.store_welcome)
+            findViewById<Button>(R.id.install_store).text = getString(R.string.install_store_button)
         }
     }
 
     override fun onDestroy() {
         super.onDestroy()
         unregisterReceiver(mDownloadReceiver)
-        unregisterReceiver(mPackageReceiver)
     }
 
     private fun disableMe() {
