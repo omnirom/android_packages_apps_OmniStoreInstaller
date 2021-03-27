@@ -3,7 +3,6 @@
     <string name="app_name">OmniStoreInstaller</string>
     <string name="store_installed">OmniStore on juba installitud</string>
     <string name="install_store_button">Installi OmniStore</string>
-    <string name="store_welcome">Tere tulemast uude OmniStore\'i!\nOled vaid ühe koputuse kaugusel.\nPalun vajuta alumist nuppu,\net paigaldada tõeline rakendus.</string>
     <string name="dialog_title_network_error">Võrguviga</string>
     <string name="dialog_message_network_error">Võrguühendus pole saadaval.\nPalun veendu, et oled võrku ühendatud.</string>
 </resources>
