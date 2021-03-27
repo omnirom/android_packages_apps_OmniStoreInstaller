@@ -1,2 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="app_name">OmniStoreInstaller</string>
+    <string name="store_installed">OmniStore già installato</string>
+    <string name="install_store_button">Installa OmniStore</string>
+    <string name="store_intro_title">Benvenuto in OmniStore!</string>
+    <string name="store_welcome">Sei a un passo dal traguardo.\nPremi il pulsante qui sotto\nper installare l\'applicazione reale.\n\nDopo di che puoi disattivare questo installatore.</string>
+    <string name="dialog_title_network_error">Errore di rete</string>
+    <string name="dialog_message_network_error">Connessione di rete non disponibile.\nAssicurati di essere connesso a una rete.</string>
+    <string name="disable_app_button">Disattiva Installer</string>
+</resources>

@@ -3,7 +3,9 @@
     <string name="app_name">OmniStoreInstaller</string>
     <string name="store_installed">OmniStore je již nainstalováno</string>
     <string name="install_store_button">Nainstalovat OmniStore</string>
-    <string name="store_welcome">Vítejte v novém OmniStore!\nZbývá vám jen jeden krok.\nNíže stiskněte tlačítko\npro instalaci aplikace.</string>
+    <string name="store_intro_title">Vítejte v OmniStore!</string>
+    <string name="store_welcome">Zbývá ještě jeden krok.\nChcete-li nainstalovat skutečnou aplikaci, stiskněte tlačítko níže..\n\nPoté můžete tento instalátor vypnout.</string>
     <string name="dialog_title_network_error">Chyba sítě</string>
     <string name="dialog_message_network_error">Připojení k síti není k dispozici.\nUjistěte se, že jste připojeni k síti.</string>
+    <string name="disable_app_button">Vypnout instalátor</string>
 </resources>

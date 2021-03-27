@@ -3,7 +3,9 @@
     <string name="app_name">OmniStoreInstaller</string>
     <string name="store_installed">OmniStore zâten kurulmuş</string>
     <string name="install_store_button">OmniStore\'u kur</string>
-    <string name="store_welcome">Yeni OmniStore\'a hoş geldiniz!\nSadece bir adım uzaktasınız.\nGerçek uygulamayı kurmak için lütfen\naşağıdaki düğmeye basınız.</string>
+    <string name="store_intro_title">OmniStore\'a hoş geldiniz!</string>
+    <string name="store_welcome">Sadece bir adım uzaktasınız.\nGerçek uygulamayı kurmak için lütfen\naşağıdaki düğmeye basınız.\n\nArdından bu yükleyiciyi devre dışı bırakabilirsiniz.</string>
     <string name="dialog_title_network_error">Ağ Hatâsı</string>
     <string name="dialog_message_network_error">Ağ bağlantısı mevcut değildir.\nLütfen bir ağa bağlı olduğunuzdan emin olunuz.</string>
+    <string name="disable_app_button">Yükleyiciyi devre dışı bırak</string>
 </resources>
