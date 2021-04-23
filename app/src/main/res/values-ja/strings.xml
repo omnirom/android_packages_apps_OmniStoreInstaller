@@ -3,6 +3,9 @@
     <string name="app_name">OmniStoreInstaller</string>
     <string name="store_installed">OmniStore は既にインストールされています</string>
     <string name="install_store_button">OmniStore をインストール</string>
+    <string name="store_intro_title">OmniStore へようこそ!</string>
+    <string name="store_welcome">あともう1段階です。\nアプリをインストールするには\n下部のボタンを押して下さい。\n\nこの後このインストーラーを無効化できます。</string>
     <string name="dialog_title_network_error">ネットワークエラー</string>
     <string name="dialog_message_network_error">ネットワークに接続できません。\nネットワークに接続していることを確認して下さい。</string>
+    <string name="disable_app_button">インストーラを無効化</string>
 </resources>
