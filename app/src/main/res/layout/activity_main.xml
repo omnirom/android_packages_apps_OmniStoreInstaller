@@ -48,17 +48,13 @@
             android:text="@string/store_welcome"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/install_store"
-            style="@style/Widget.AppCompat.Button.Colored"
+            style="@style/ButtonStyleDefault"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:backgroundTint="@color/colorPrimary"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:text="@string/install_store_button"
-            android:textColor="@android:color/white" />
+            android:text="@string/install_store_button"/>
 
         <Space
             android:layout_width="match_parent"
