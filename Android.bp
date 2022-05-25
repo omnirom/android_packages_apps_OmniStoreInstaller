@@ -15,6 +15,7 @@ android_app {
   static_libs: [
     "androidx.core_core",
     "androidx.appcompat_appcompat",
+    "com.google.android.material_material",
   ],
 
   kotlincflags: ["-Xjvm-default=enable"],
