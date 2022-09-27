@@ -16,6 +16,7 @@ android_app {
     "androidx.core_core",
     "androidx.appcompat_appcompat",
     "com.google.android.material_material",
+    "kotlinx-coroutines-android",
   ],
 
   kotlincflags: ["-Xjvm-default=enable"],

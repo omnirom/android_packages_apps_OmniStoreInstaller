@@ -17,13 +17,13 @@
  */
 package org.omnirom.omnistoreinstaller
 
-import android.Manifest
 import android.app.AlertDialog
 import android.app.DownloadManager
-import android.content.*
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.PackageManager
-import android.net.ConnectivityManager
-import android.net.Network
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
@@ -34,6 +34,7 @@ import android.webkit.URLUtil
 import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.TextView
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 
 class MainActivity : AppCompatActivity() {
@@ -42,7 +43,14 @@ class MainActivity : AppCompatActivity() {
     private val mDownloadReceiver: DownloadReceiver = DownloadReceiver()
     private val STORE_APP_APK = "OmniStore.apk"
     private val OMNI_STORE_APP_PKG = "org.omnirom.omnistore"
-    private var mDownloadId:Long = -1
+    private var mDownloadId: Long = -1
+
+    private val getPermissions =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (it.resultCode == RESULT_OK) {
+                downloadStore()
+            }
+        }
 
     inner class DownloadReceiver : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -68,7 +76,11 @@ class MainActivity : AppCompatActivity() {
 
         findViewById<Button>(R.id.install_store).setOnClickListener {
             if (!isInstalled()) {
-                downloadStore()
+                if (!hasInstallPermissions()) {
+                    checkUnknownResourceInstallation()
+                } else {
+                    downloadStore()
+                }
             } else {
                 disableMe()
             }
@@ -118,13 +130,11 @@ class MainActivity : AppCompatActivity() {
                                 Environment.DIRECTORY_DOWNLOADS,
                                 STORE_APP_APK
                             )
-                            //request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE)
-                            //request.setNotificationVisibility()
                             mDownloadManager.enqueue(request)
                         }
                     }
                 });
-        checkApp.execute()
+        checkApp.run()
     }
 
     private fun installApp(downloadId: Long) {
@@ -141,11 +151,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun isInstalled(): Boolean {
-        try {
+        return try {
             packageManager.getApplicationInfo(OMNI_STORE_APP_PKG, PackageManager.GET_META_DATA)
-            return true
+            true
         } catch (e: PackageManager.NameNotFoundException) {
-            return false
+            false
         }
     }
 
@@ -182,5 +192,18 @@ class MainActivity : AppCompatActivity() {
         val base: Uri = Uri.parse(getAppsBaseUrl(context))
         val u: Uri = Uri.withAppendedPath(base, rootUri)
         return u.toString()
+    }
+
+    private fun hasInstallPermissions(): Boolean {
+        return packageManager.canRequestPackageInstalls()
+    }
+
+    private fun checkUnknownResourceInstallation() {
+        getPermissions.launch(
+            Intent(
+                Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES,
+                Uri.parse("package:$packageName")
+            )
+        )
     }
 }

@@ -17,8 +17,10 @@
  */
 package org.omnirom.omnistoreinstaller
 
-import android.os.AsyncTask
 import android.util.Log
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.net.URL
 import javax.net.ssl.HttpsURLConnection
 
@@ -35,33 +37,25 @@ class NetworkUtils {
     inner class CheckAppTask(
         url: String,
         postAction: NetworkTaskCallback
-    ) : AsyncTask<String, Int, Int>() {
+    ) {
         val mPostAction: NetworkTaskCallback = postAction
         val mUrl: String = url
 
-        override fun onPreExecute() {
-            super.onPreExecute()
-            mNetworkError = false
-        }
-
-        override fun doInBackground(vararg params: String?): Int {
-            var urlConnection: HttpsURLConnection? = null
-            try {
-                urlConnection = setupHttpsRequest(mUrl)
-                if (urlConnection == null) {
+        fun run() {
+            CoroutineScope(Dispatchers.IO).launch {
+                var urlConnection: HttpsURLConnection? = null
+                try {
+                    urlConnection = setupHttpsRequest(mUrl)
+                    if (urlConnection == null) {
+                        mNetworkError = true
+                    }
+                } catch (e: Exception) {
                     mNetworkError = true
+                } finally {
+                    urlConnection?.disconnect()
                 }
-            } catch (e: Exception) {
-                mNetworkError = true
-            } finally {
-                urlConnection?.disconnect()
+                mPostAction.postAction(mNetworkError)
             }
-            return 0
-        }
-
-        override fun onPostExecute(result: Int?) {
-            super.onPostExecute(result)
-            mPostAction.postAction(mNetworkError)
         }
     }
 

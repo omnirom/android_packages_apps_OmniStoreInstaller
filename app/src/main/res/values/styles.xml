@@ -2,13 +2,15 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimary</item>
-        <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:windowBackground">@color/colorPrimary</item>
-        <item name="android:windowLightNavigationBar">true</item>
+        <item name="colorAccent">@color/colorPrimary</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
-        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightStatusBar">?attr/isLightTheme</item>
+        <item name="android:windowLightNavigationBar">?attr/isLightTheme</item>
+        <item name="android:windowSplashScreenIconBackgroundColor">@color/omni_logo_color</item>
     </style>
 
+    <style name="BodyTextStyle" parent="@style/TextAppearance.Material3.BodyMedium">
+        <item name="android:textSize">16sp</item>
+    </style>
 </resources>
