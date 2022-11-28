@@ -10,6 +10,9 @@
         <item name="android:windowSplashScreenIconBackgroundColor">@color/omni_logo_color</item>
     </style>
 
+    <style name="AppTheme.Overlay" parent="ThemeOverlay.Material3.DynamicColors.DayNight">
+    </style>
+
     <style name="BodyTextStyle" parent="@style/TextAppearance.Material3.BodyMedium">
         <item name="android:textSize">16sp</item>
     </style>
