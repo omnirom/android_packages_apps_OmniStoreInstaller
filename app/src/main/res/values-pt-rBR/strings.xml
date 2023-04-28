@@ -3,6 +3,9 @@
     <string name="app_name">Instalação OmniStore</string>
     <string name="store_installed">OmniStore já instalado</string>
     <string name="install_store_button">Instalar OmniStore</string>
+    <string name="store_intro_title">Bem-vindo ao OmniStore!</string>
+    <string name="store_welcome">Você está a apenas um passo.\nPor favor, pressione o botão abaixo\npara instalar o aplicativo real.\n\nDepois disso, você pode desativar este instalador.</string>
     <string name="dialog_title_network_error">Erro de Rede</string>
     <string name="dialog_message_network_error">Conexão de rede não disponível.\nVerifique se você está conectado a uma rede. </string>
+    <string name="disable_app_button">Desativar o Installer</string>
 </resources>
