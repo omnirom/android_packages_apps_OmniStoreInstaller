@@ -21,6 +21,7 @@ import android.util.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.net.URL
 import javax.net.ssl.HttpsURLConnection
 
@@ -54,7 +55,9 @@ class NetworkUtils {
                 } finally {
                     urlConnection?.disconnect()
                 }
-                mPostAction.postAction(mNetworkError)
+                withContext(Dispatchers.Main) {
+                    mPostAction.postAction(mNetworkError)
+                }
             }
         }
     }
