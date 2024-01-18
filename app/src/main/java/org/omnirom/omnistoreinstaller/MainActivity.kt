@@ -17,6 +17,7 @@
  */
 package org.omnirom.omnistoreinstaller
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.DownloadManager
 import android.content.BroadcastReceiver
@@ -24,6 +25,8 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
+import android.graphics.drawable.AdaptiveIconDrawable
+import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
@@ -33,9 +36,11 @@ import android.view.View
 import android.webkit.URLUtil
 import android.widget.Button
 import android.widget.FrameLayout
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 
 class MainActivity : AppCompatActivity() {
     private val TAG = "OmniStoreInstaller:MainActivity"
@@ -66,13 +71,21 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    @SuppressLint("UseCompatLoadingForDrawables")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        val appIcon = AdaptiveIconDrawable(
+            ColorDrawable(getColor(R.color.omni_logo_color)),
+            getDrawable(R.drawable.ic_launcher_foreground)
+        )
+        findViewById<ImageView>(R.id.install_image).setImageDrawable(appIcon)
+
         mDownloadManager = this.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
 
         val downloadFilter = IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE)
-        registerReceiver(mDownloadReceiver, downloadFilter)
+        ContextCompat.registerReceiver(this, mDownloadReceiver, downloadFilter, ContextCompat.RECEIVER_EXPORTED)
 
         findViewById<Button>(R.id.install_store).setOnClickListener {
             if (!isInstalled()) {
