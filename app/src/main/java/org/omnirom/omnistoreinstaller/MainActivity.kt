@@ -139,7 +139,8 @@ class MainActivity : AppCompatActivity() {
                         } else {
                             val request: DownloadManager.Request =
                                 DownloadManager.Request(Uri.parse(url))
-                            request.setDestinationInExternalPublicDir(
+                            request.setDestinationInExternalFilesDir(
+                                applicationContext,
                                 Environment.DIRECTORY_DOWNLOADS,
                                 STORE_APP_APK
                             )
